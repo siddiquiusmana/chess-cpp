@@ -4,6 +4,7 @@ project(chess VERSION 0.1.0 LANGUAGES C CXX)
 
 # Look for SDL2 and other various 3rd party libraries and fail if not found
 find_package(SDL2 REQUIRED)
+find_package(spdlog REQUIRED)
 
 # Create an executable by adding all the source code
 add_executable(chess 
@@ -20,4 +21,5 @@ target_include_directories(chess
 target_link_libraries(chess 
     SDL2::SDL2
     SDL2::SDL2main
+    spdlog::spdlog
 )
