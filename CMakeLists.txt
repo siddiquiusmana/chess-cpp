@@ -8,6 +8,12 @@ find_package(SDL2 REQUIRED)
 # Create an executable by adding all the source code
 add_executable(chess 
     src/main.cpp
+    src/SDLWindow.cpp
+)
+
+# The include directory with the header files
+target_include_directories(chess
+    PUBLIC src/include
 )
 
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library.
