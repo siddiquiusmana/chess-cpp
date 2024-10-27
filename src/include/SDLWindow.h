@@ -3,8 +3,7 @@
 
 #include <iostream>
 #include <SDL2/SDL.h>
-
-using namespace std;
+#include "SDLErrorCodes.h"
 
 /**
  * The window class for creating an SDLWindow. The constructor only initializes
@@ -17,7 +16,7 @@ class SDLWindow
         SDL_Window* window;
 
         // The window title
-        string w_title;
+        std::string w_title;
 
         // The window width
         int w_width;
@@ -36,7 +35,7 @@ class SDLWindow
 
     public:
         // Constructor for the SDLWindow class, takes in the title of the window.
-        SDLWindow(string title);
+        SDLWindow(std::string title);
 
         // Sets the window size of the SDLWindow
         void setWindowSize(int width, int height);

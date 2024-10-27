@@ -1,6 +1,6 @@
 #include "include/SDLWindow.h"
 
-SDLWindow::SDLWindow(string title)
+SDLWindow::SDLWindow(std::string title)
 {
     // Only require the title, the rest, set to default
     w_title = title;
@@ -45,32 +45,32 @@ void SDLWindow::createWindow()
 {
     // Only initialize SDL if it isn't already initialized.
     // This is to avoid multiple initializations of SDL.
-    cout << "Checking SDL Video Initialization..." << endl;
+    std::cout << "Checking SDL Video Initialization..." << std::endl;
     Uint32 was_sdl_init = SDL_WasInit(SDL_INIT_EVERYTHING);
     if(was_sdl_init & SDL_INIT_VIDEO) // If SDL is already initialized
     {
-        cout << "Video is already initialized, skipping SDL initialization." << endl;
+        std::cout << "Video is already initialized, skipping SDL initialization." << std::endl;
     }
     else // Otherwise initialize SDL
     {
-        cout << "Initializing SDL Video..." << endl;
+        std::cout << "Initializing SDL Video..." << std::endl;
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0){
-            cout << "SDL could not initialize! SDL Error: " << SDL_GetError();
-            exit(-1);
+            std::cout << "SDL could not initialize! SDL Error: " << SDL_GetError();
+            exit(SDL_INIT_ERROR);
         }
     }
 
-    cout << "\nCreating a window with the following: " << endl;
-    cout << "\tTitle: " << w_title << endl;
-    cout << "\tXPos: " << w_xPos << "\tYPos: " << w_yPos << endl;
-    cout << "\tWidth: " << w_width << "\tHeight: " << w_height << endl;
-    cout << "\tFlags: " << w_flags << endl;
+    std::cout << "\nCreating a window with the following: " << std::endl;
+    std::cout << "\tTitle: " << w_title << std::endl;
+    std::cout << "\tXPos: " << w_xPos << "\tYPos: " << w_yPos << std::endl;
+    std::cout << "\tWidth: " << w_width << "\tHeight: " << w_height << std::endl;
+    std::cout << "\tFlags: " << w_flags << std::endl;
     window = SDL_CreateWindow(w_title.c_str(), w_xPos, w_yPos, w_width, w_height, w_flags);
     if(window == NULL)
     {
-        cout << "Window could not be created! SDL Error: " << SDL_GetError() << endl;
-        exit(-1);
+        std::cout << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
+        exit(SDL_WINDOW_ERROR);
     }
 
-    SDL_Delay(1000);
+    SDL_Delay(10000);
 }
