@@ -9,10 +9,10 @@ int main(int argc, char** argv)
     LogManager lm(argc, argv);
 
     // The logger for Main
-    auto mainlogger = lm.getLogger("Main");
+    auto mainLogger = lm.getLogger("Main");
 
     // Chess Banner
-    displayBanner(mainlogger);
+    displayBanner(mainLogger);
 
     // Create a window
     SDLWindow window("Chess", lm);
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
 void displayBanner(std::shared_ptr<spdlog::logger> logger)
 {
-    logger->info("*********************************");
-    logger->info("******  Chess Application  ******");
-    logger->info("*********************************");
+    logger->info("*************************************************");
+    logger->info("**************  Chess Application  **************");
+    logger->info("*************************************************");
 }

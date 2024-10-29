@@ -29,6 +29,12 @@ class LogManager
         std::shared_ptr<spdlog::logger> getLogger(std::string name);
 
     private:
+        // argc. Used to set logging levels of loggers
+        int lm_argc;
+
+        // argv. Used to set logging levels of loggers
+        char** lm_argv;
+
         // Pattern for console logger
         std::string lm_consolePattern;
         

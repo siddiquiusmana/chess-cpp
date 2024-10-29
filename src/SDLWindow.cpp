@@ -64,7 +64,7 @@ void SDLWindow::createWindow()
     }
 
     w_logger->debug("Creating a window with the following: \
-                    \n\t\t\tTitle: {} \
+                      \t\t\tTitle: {} \
                     \n\t\t\tXPos: {}\tYPos: {} \
                     \n\t\t\tWidth: {}\tHeight: {} \
                     \n\t\t\tFlags: {}",
