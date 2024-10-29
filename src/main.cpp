@@ -1,18 +1,29 @@
-#include "include/SDLWindow.h"
-#include <spdlog/cfg/env.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/spdlog.h>
+#include "include/SDL/SDLWindow.h"
+#include "include/Logger/LogManager.h"
 
-int main(void)
+void displayBanner(std::shared_ptr<spdlog::logger> logger);
+
+int main(int argc, char** argv)
 {
-    spdlog::cfg::load_env_levels();
+    // The log manager that instantiates logging for the whole app
+    LogManager lm(argc, argv);
 
-    spdlog::set_level(spdlog::level::debug);
-    spdlog::debug("This is a debug message");
+    // The logger for Main
+    auto mainlogger = lm.getLogger("Main");
+
+    // Chess Banner
+    displayBanner(mainlogger);
 
     // Create a window
-    SDLWindow window("Chess");
+    SDLWindow window("Chess", lm);
     window.createWindow();
 
     return 0;
+}
+
+void displayBanner(std::shared_ptr<spdlog::logger> logger)
+{
+    logger->info("*********************************");
+    logger->info("******  Chess Application  ******");
+    logger->info("*********************************");
 }

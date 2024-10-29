@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <SDL2/SDL.h>
+
+#include "../Logger/LogManager.h"
 #include "SDLErrorCodes.h"
 
 /**
@@ -33,9 +35,12 @@ class SDLWindow
         // The window flags
         Uint32 w_flags;
 
+        // The class logger
+        std::shared_ptr<spdlog::logger> w_logger;
+
     public:
-        // Constructor for the SDLWindow class, takes in the title of the window.
-        SDLWindow(std::string title);
+        // Constructor for the SDLWindow class, takes in the title of the window and a logger
+        SDLWindow(std::string title, LogManager lm);
 
         // Sets the window size of the SDLWindow
         void setWindowSize(int width, int height);

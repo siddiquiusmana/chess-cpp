@@ -1,7 +1,10 @@
-#include "include/SDLWindow.h"
+#include "include/SDL/SDLWindow.h"
 
-SDLWindow::SDLWindow(std::string title)
+SDLWindow::SDLWindow(std::string title, LogManager lm)
 {
+    // Initialize the logger
+    w_logger = lm.getLogger("SDLWindow");
+
     // Only require the title, the rest, set to default
     w_title = title;
 
@@ -45,30 +48,31 @@ void SDLWindow::createWindow()
 {
     // Only initialize SDL if it isn't already initialized.
     // This is to avoid multiple initializations of SDL.
-    std::cout << "Checking SDL Video Initialization..." << std::endl;
+    w_logger->debug("Checking SDL Video Initialization...");
     Uint32 was_sdl_init = SDL_WasInit(SDL_INIT_EVERYTHING);
     if(was_sdl_init & SDL_INIT_VIDEO) // If SDL is already initialized
     {
-        std::cout << "Video is already initialized, skipping SDL initialization." << std::endl;
+        w_logger->debug("Video is already initialized, skipping SDL initialization.");
     }
     else // Otherwise initialize SDL
     {
-        std::cout << "Initializing SDL Video..." << std::endl;
+        w_logger->debug("Initializing SDL Video...");
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0){
-            std::cout << "SDL could not initialize! SDL Error: " << SDL_GetError();
+            w_logger->critical("SDL could not initialize! SDL Error: {}", SDL_GetError());
             exit(SDL_INIT_ERROR);
         }
     }
 
-    std::cout << "\nCreating a window with the following: " << std::endl;
-    std::cout << "\tTitle: " << w_title << std::endl;
-    std::cout << "\tXPos: " << w_xPos << "\tYPos: " << w_yPos << std::endl;
-    std::cout << "\tWidth: " << w_width << "\tHeight: " << w_height << std::endl;
-    std::cout << "\tFlags: " << w_flags << std::endl;
+    w_logger->debug("Creating a window with the following: \
+                    \n\t\t\tTitle: {} \
+                    \n\t\t\tXPos: {}\tYPos: {} \
+                    \n\t\t\tWidth: {}\tHeight: {} \
+                    \n\t\t\tFlags: {}",
+                    w_title, w_xPos, w_yPos, w_width, w_height, w_flags);
     window = SDL_CreateWindow(w_title.c_str(), w_xPos, w_yPos, w_width, w_height, w_flags);
     if(window == NULL)
     {
-        std::cout << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
+        w_logger->critical("Window could not be created! SDL Error: {}", SDL_GetError());
         exit(SDL_WINDOW_ERROR);
     }
 

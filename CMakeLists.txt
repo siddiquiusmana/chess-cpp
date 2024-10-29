@@ -10,6 +10,7 @@ find_package(spdlog REQUIRED)
 add_executable(chess 
     src/main.cpp
     src/SDLWindow.cpp
+    src/LogManager.cpp
 )
 
 # The include directory with the header files
