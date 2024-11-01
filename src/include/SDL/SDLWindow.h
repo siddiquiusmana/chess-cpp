@@ -1,10 +1,13 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include <cmath>
 #include <iostream>
+#include <stdexcept>
 #include <SDL2/SDL.h>
 
 #include "../Logger/LogManager.h"
+#include "Geometry.h"
 #include "SDLErrorCodes.h"
 
 /**
@@ -38,9 +41,13 @@ class SDLWindow
         // The class logger
         std::shared_ptr<spdlog::logger> w_logger;
 
+        // The renderer specific to this window, allowing for 
+        // drawing to the window
+        SDL_Renderer *renderer;
+
     public:
         // Constructor for the SDLWindow class, takes in the title of the window and a logger
-        SDLWindow(std::string title, LogManager lm);
+        SDLWindow(std::string title, std::shared_ptr<LogManager> lm);
 
         // Sets the window size of the SDLWindow
         void setWindowSize(int width, int height);
@@ -63,9 +70,28 @@ class SDLWindow
         ~SDLWindow();
 
         // The getter for SDL_Window
-        SDL_Window* getSDLWindow();
+        SDL_Window* getWindow();
+        
+        // Retrieve the width of the window
+        int getWindowWidth();
 
-    protected:
+        // Retrieve the height of the window
+        int getWindowHeight();
+        
+        // Retrieve the renderer for this window which allows you to draw on the waindow
+        SDL_Renderer* getRenderer();
+
+        // Draws a line on the window using the given start/end points.
+        void drawLine(Geometry::Point start, Geometry::Point end);
+
+        // Draws a line on the window using the given color, start/end points
+        void drawLine(Geometry::Point start, Geometry::Point end, SDL_Color color);
+
+        // Renders the background for the window
+        void renderBackground(SDL_Color color);
+
+        // Renders the changes made so far
+        void render();
 };
 
 #endif // WINDOW_H
