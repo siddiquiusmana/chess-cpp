@@ -6,6 +6,9 @@ Chess::Chess(std::shared_ptr<LogManager> lm_ptr)
     chessLogger = lm->getLogger("Chess");
     chessLogger->debug("Initializing Chess...");
 
+    // Initialize the theme manager
+    themeManager = std::make_shared<ThemeManager>(lm_ptr);
+
     // Display the banner
     displayBanner();
 
@@ -62,9 +65,6 @@ void Chess::run()
     }
 }
 
-/**
- * displayBanner implementation
- */
 void Chess::displayBanner()
 {
     chessLogger->info("*************************************************");
@@ -85,44 +85,49 @@ void Chess::initializeChessBoard()
         exit(CHESS_INIT_FAILURE);
     }
 
-    // Create vertical lines
-    for(int i=0; i<=8; i++)
+    // Initial board square
+    int mainBoardSize = (int) squareSize * 8;
+    SDL_Rect mainBoardRect;
+    mainBoardRect.h = mainBoardRect.w = mainBoardSize;
+    mainBoardRect.x = boardBorderPixels;
+    mainBoardRect.y = boardBorderPixels;
+    mainWindow->drawRect(&mainBoardRect, {0,0,0,0});
+
+    // Variable to track dark and light squares
+    bool isDarkSquare = true;
+    bool doesRowStartDark = true;
+    SDL_Color darkSquare = themeManager->getCurrentTheme().darkSqaureColor;
+    SDL_Color lightSquare = themeManager->getCurrentTheme().lightSquareColor;
+
+    // Draw the rest of the board squares
+    for(int row=0; row<8; row++)
     {
-        // Vertical lines to draw
-        Geometry::Line vertical_line = {
-            {   // start
-                (int)boardBorderPixels + (i * (int)squareSize),             // x 
-                (int)boardBorderPixels                                      // y
-            },
-            {   // end
-                (int)boardBorderPixels + (i * (int)squareSize),             // x
-                mainWindow->getWindowHeight() - (int)boardBorderPixels      // y
-            }
-        };
+        isDarkSquare = doesRowStartDark;
 
-        // horizontal lines to draw
-        Geometry::Line horizontal_line = {
-            {   // start
-                (int) boardBorderPixels,                                    // x
-                (int) boardBorderPixels + ((i * (int)squareSize))           // y
-            },
-            {   // end
-                mainWindow->getWindowWidth() - (int) boardBorderPixels,     // x
-                (int) boardBorderPixels + ((i * (int)squareSize))           // y
-            }
-        };
+        for(int col=0; col<8; col++)
+        {
+            SDL_Rect square;
+            square.w = square.h = (int) squareSize;
+            square.x = boardBorderPixels + ((int) squareSize * col);
+            square.y = boardBorderPixels + ((int) squareSize * row);
 
-        // Draw the lines
-        try
-        {
-            mainWindow->drawLine(horizontal_line.start, horizontal_line.end, {0,0,0,0});
-            mainWindow->drawLine(vertical_line.start, vertical_line.end, {0,0,0,0});
+            // Set the right color for the square
+            SDL_Color squareColor = isDarkSquare ? darkSquare : lightSquare;
+            try
+            {
+                mainWindow->drawFilledRect(&square, squareColor);
+            }
+            catch(const char* error)
+            {
+                chessLogger->critical("Failed to initialize chess board. {}", error);
+                exit(CHESS_INIT_FAILURE);
+            }
+
+            // flip the isDarkSquare var so we can alternate between dark and light squares
+            isDarkSquare = !isDarkSquare;
         }
-        catch(const char* error)
-        {
-            chessLogger->critical("Unable to draw grid: {}", error);
-            exit(CHESS_INIT_FAILURE);
-        }
+
+        doesRowStartDark = !doesRowStartDark;
     }
         
     mainWindow->render();

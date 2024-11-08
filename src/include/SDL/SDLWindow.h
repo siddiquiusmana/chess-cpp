@@ -87,6 +87,20 @@ class SDLWindow
         // Draws a line on the window using the given color, start/end points
         void drawLine(Geometry::Point start, Geometry::Point end, SDL_Color color);
 
+        // Draws a rectangle to the window given the top left point and the bottom right points
+        void drawRect(SDL_Rect *rect);
+
+        // Draws a rectangle to the window given the top left point and the bottom right points with
+        // color specified
+        void drawRect(SDL_Rect *rect, SDL_Color color);
+
+        // Draws a rectangle filled with a solid color to the window given a rectangle object
+        void drawFilledRect(SDL_Rect *rect);
+
+        // Draws a rectangle filled with a solid color to the window given a rectangle object 
+        // and a specific color
+        void drawFilledRect(SDL_Rect *rect, SDL_Color color);
+
         // Renders the background for the window
         void renderBackground(SDL_Color color);
 

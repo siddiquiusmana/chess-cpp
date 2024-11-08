@@ -158,9 +158,58 @@ void SDLWindow::drawLine(Geometry::Point start, Geometry::Point end, SDL_Color c
     }
 }
 
+void SDLWindow::drawRect(SDL_Rect *rect)
+{
+    // Draw the rectangle and throw an error if an issue arises
+    if(SDL_RenderDrawRect(renderer, rect) < 0)
+    {
+        throw SDL_GetError();
+    }
+}
+
+void SDLWindow::drawRect(SDL_Rect *rect, SDL_Color color)
+{
+    // Store the current renderer color and set it back once we have drawn the line
+    SDL_Color currentRendererColor;
+    SDL_GetRenderDrawColor(renderer, &(currentRendererColor.r), &(currentRendererColor.g), &(currentRendererColor.b), &(currentRendererColor.a));
+    
+    // Draw the rectangle with the desired color and set the color back to what it was
+    if( SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) < 0 || 
+        SDL_RenderDrawRect(renderer, rect) < 0 || 
+        SDL_SetRenderDrawColor(renderer, currentRendererColor.r, currentRendererColor.g, currentRendererColor.b, currentRendererColor.a) < 0)
+    {
+        throw SDL_GetError();
+    }
+}
+
+void SDLWindow::drawFilledRect(SDL_Rect *rect)
+{
+
+    // Draw the rectangle and throw an error if an issue arises
+    if(SDL_RenderFillRect(renderer, rect) < 0)
+    {
+        throw SDL_GetError();
+    }
+}
+
+void SDLWindow::drawFilledRect(SDL_Rect *rect, SDL_Color color)
+{
+    // Store the current renderer color and set it back once we have drawn the line
+    SDL_Color currentRendererColor;
+    SDL_GetRenderDrawColor(renderer, &(currentRendererColor.r), &(currentRendererColor.g), &(currentRendererColor.b), &(currentRendererColor.a));
+    
+    // Draw the rectangle with the desired color and set the color back to what it was
+    if( SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) < 0 || 
+        SDL_RenderFillRect(renderer, rect) < 0 || 
+        SDL_SetRenderDrawColor(renderer, currentRendererColor.r, currentRendererColor.g, currentRendererColor.b, currentRendererColor.a) < 0)
+    {
+        throw SDL_GetError();
+    }
+}
+
 void SDLWindow::render()
 {   
-    // Render the buffer and then clear it
+    // Render the buffer
     SDL_RenderPresent(renderer);
 }
 

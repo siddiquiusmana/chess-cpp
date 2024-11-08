@@ -13,6 +13,7 @@ add_executable(chess
     src/SDLWindow.cpp
     src/LogManager.cpp
     src/Chess.cpp
+    src/theme/ThemeManager.cpp
 )
 
 # The include directory with the header files

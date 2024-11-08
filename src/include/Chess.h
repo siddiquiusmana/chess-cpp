@@ -2,6 +2,7 @@
 
 #include "Logger/LogManager.h"
 #include "SDL/SDLWindow.h"
+#include "Themes/ThemeManager.h"
 
 /**
  * Different statuses for the chess application
@@ -46,6 +47,9 @@ class Chess
 
         // The class logger
         std::shared_ptr<spdlog::logger> chessLogger;
+
+        // The theme manager
+        std::shared_ptr<ThemeManager> themeManager;
 
         // Status of the chess application
         Status status;
