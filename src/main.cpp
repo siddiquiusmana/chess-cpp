@@ -1,4 +1,4 @@
-#include "include/Chess.h"
+#include "include/Chess/Chess.h"
 
 /**
  * Main function
@@ -9,7 +9,7 @@ int main(int argc, char** argv)
     auto lm_ptr = std::make_shared<LogManager>(argc, argv);
     
     // The chess game
-    Chess chess(lm_ptr);
+    Chess::GameApplication chess(lm_ptr);
     chess.run();
 
     return 0;

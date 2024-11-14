@@ -1,6 +1,6 @@
-#include "include/Chess.h"
+#include "../include/Chess/Chess.h"
 
-Chess::Chess(std::shared_ptr<LogManager> lm_ptr)
+Chess::GameApplication::GameApplication(std::shared_ptr<LogManager> lm_ptr)
 {
     lm = lm_ptr;
     chessLogger = lm->getLogger("Chess");
@@ -31,11 +31,15 @@ Chess::Chess(std::shared_ptr<LogManager> lm_ptr)
 
     // Initialize the chess board
     initializeChessBoard();
-        status = INITIALIZED;
+
+    // Initialize the pieces
+    initializeChessPieces();
+
+    status = INITIALIZED;
     chessLogger->info("Board Initialized.");
 }
 
-Chess::~Chess()
+Chess::GameApplication::~GameApplication()
 {
     chessLogger->debug("Cleaning up Chess...");
 
@@ -44,7 +48,7 @@ Chess::~Chess()
     chessLogger->debug("Cleaned up Chess...");
 }
 
-void Chess::run()
+void Chess::GameApplication::run()
 {
     status = RUNNING;
 
@@ -65,14 +69,14 @@ void Chess::run()
     }
 }
 
-void Chess::displayBanner()
+void Chess::GameApplication::displayBanner()
 {
     chessLogger->info("*************************************************");
     chessLogger->info("**************  Chess Application  **************");
     chessLogger->info("*************************************************");
 }
 
-void Chess::initializeChessBoard()
+void Chess::GameApplication::initializeChessBoard()
 {
     // Create a blank background// Create a blank background
     try
@@ -131,4 +135,14 @@ void Chess::initializeChessBoard()
     }
         
     mainWindow->render();
+}
+
+void Chess::GameApplication::initializeChessPieces()
+{
+    // Assumption: The board has already been initialized
+    // Create pawns on each square on the first row
+    for(int col=0; col<8; col++)
+    {
+        
+    }
 }

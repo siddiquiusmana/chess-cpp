@@ -10,9 +10,9 @@ find_package(spdlog REQUIRED)
 # Create an executable by adding all the source code
 add_executable(chess 
     src/main.cpp
-    src/SDLWindow.cpp
-    src/LogManager.cpp
-    src/Chess.cpp
+    src/SDL/SDLWindow.cpp
+    src/LogManager/LogManager.cpp
+    src/Chess/Chess.cpp
     src/theme/ThemeManager.cpp
 )
 

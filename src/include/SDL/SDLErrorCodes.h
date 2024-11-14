@@ -1,5 +1,4 @@
-#ifndef ERRORS_H
-#define ERRORS_H
+#pragma once
 
 /**
  * Error codes for different SDL Modules so debugging is easier if

@@ -1,4 +1,4 @@
-#include "include/Logger/LogManager.h"
+#include "../include/Logger/LogManager.h"
 
 LogManager::LogManager(int argc, char** argv)
 {

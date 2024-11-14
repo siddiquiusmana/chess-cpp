@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../SDL/SDLWindow.h"
 
 // The theme object

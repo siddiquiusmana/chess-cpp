@@ -1,4 +1,4 @@
-#include "include/SDL/SDLWindow.h"
+#include "../include/SDL/SDLWindow.h"
 
 SDLWindow::SDLWindow(std::string title, std::shared_ptr<LogManager> lm)
 {
