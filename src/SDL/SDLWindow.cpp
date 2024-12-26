@@ -16,7 +16,7 @@ SDLWindow::SDLWindow(std::string title, std::shared_ptr<LogManager> lm)
     w_flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
 
     // Initialize null pointers
-    renderer = nullptr;
+    this->renderer = nullptr;
     window = nullptr;
 
     w_logger->debug("Initialized SDL Window...");
@@ -26,11 +26,11 @@ SDLWindow::~SDLWindow()
 {
     w_logger->debug("Cleaning up SDL Window...");
 
-    // If renderer exists, delete
-    if(renderer != NULL)
+    // If this->renderer exists, delete
+    if(this->renderer != NULL)
     {
-        SDL_DestroyRenderer(renderer);
-        renderer = NULL;
+        SDL_DestroyRenderer(this->renderer);
+        this->renderer = NULL;
     }
 
     // If window exists, delete
@@ -104,9 +104,9 @@ void SDLWindow::createWindow()
     w_logger->debug("Window created");
 
     // Create a render for the window so window can be drawn on
-    w_logger->debug("Creating a renderer for the window");
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-    if(renderer == NULL)
+    w_logger->debug("Creating a this->renderer for the window");
+    this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    if(this->renderer == NULL)
     {
         w_logger->critical("Renderer for the window failed to be created. Will be unable to draw");
         exit(SDL_WINDOW_ERROR);
@@ -121,7 +121,7 @@ SDL_Window* SDLWindow::getWindow()
 
 SDL_Renderer* SDLWindow::getRenderer()
 {
-    return renderer;
+    return this->renderer;
 }
 
 int SDLWindow::getWindowWidth()
@@ -137,7 +137,7 @@ int SDLWindow::getWindowHeight()
 void SDLWindow::drawLine(Geometry::Point start, Geometry::Point end)
 {
     // Draw the line
-    if(SDL_RenderDrawLine(renderer, start.x, start.y, end.x, end.y) < 0)
+    if(SDL_RenderDrawLine(this->renderer, start.x, start.y, end.x, end.y) < 0)
     {
         throw SDL_GetError();
     }
@@ -145,14 +145,14 @@ void SDLWindow::drawLine(Geometry::Point start, Geometry::Point end)
 
 void SDLWindow::drawLine(Geometry::Point start, Geometry::Point end, SDL_Color color)
 {
-    // Store the current renderer color and set it back once we have drawn the line
+    // Store the current this->renderer color and set it back once we have drawn the line
     SDL_Color currentRendererColor;
-    SDL_GetRenderDrawColor(renderer, &(currentRendererColor.r), &(currentRendererColor.g), &(currentRendererColor.b), &(currentRendererColor.a));
+    SDL_GetRenderDrawColor(this->renderer, &(currentRendererColor.r), &(currentRendererColor.g), &(currentRendererColor.b), &(currentRendererColor.a));
     
     // Draw the line with the desired color and set the color back to what it was
-    if( SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) < 0 || 
-        SDL_RenderDrawLine(renderer, start.x, start.y, end.x, end.y) < 0 || 
-        SDL_SetRenderDrawColor(renderer, currentRendererColor.r, currentRendererColor.g, currentRendererColor.b, currentRendererColor.a) < 0)
+    if( SDL_SetRenderDrawColor(this->renderer, color.r, color.g, color.b, color.a) < 0 || 
+        SDL_RenderDrawLine(this->renderer, start.x, start.y, end.x, end.y) < 0 || 
+        SDL_SetRenderDrawColor(this->renderer, currentRendererColor.r, currentRendererColor.g, currentRendererColor.b, currentRendererColor.a) < 0)
     {
         throw SDL_GetError();
     }
@@ -161,7 +161,7 @@ void SDLWindow::drawLine(Geometry::Point start, Geometry::Point end, SDL_Color c
 void SDLWindow::drawRect(SDL_Rect *rect)
 {
     // Draw the rectangle and throw an error if an issue arises
-    if(SDL_RenderDrawRect(renderer, rect) < 0)
+    if(SDL_RenderDrawRect(this->renderer, rect) < 0)
     {
         throw SDL_GetError();
     }
@@ -169,14 +169,14 @@ void SDLWindow::drawRect(SDL_Rect *rect)
 
 void SDLWindow::drawRect(SDL_Rect *rect, SDL_Color color)
 {
-    // Store the current renderer color and set it back once we have drawn the line
+    // Store the current this->renderer color and set it back once we have drawn the line
     SDL_Color currentRendererColor;
-    SDL_GetRenderDrawColor(renderer, &(currentRendererColor.r), &(currentRendererColor.g), &(currentRendererColor.b), &(currentRendererColor.a));
+    SDL_GetRenderDrawColor(this->renderer, &(currentRendererColor.r), &(currentRendererColor.g), &(currentRendererColor.b), &(currentRendererColor.a));
     
     // Draw the rectangle with the desired color and set the color back to what it was
-    if( SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) < 0 || 
-        SDL_RenderDrawRect(renderer, rect) < 0 || 
-        SDL_SetRenderDrawColor(renderer, currentRendererColor.r, currentRendererColor.g, currentRendererColor.b, currentRendererColor.a) < 0)
+    if( SDL_SetRenderDrawColor(this->renderer, color.r, color.g, color.b, color.a) < 0 || 
+        SDL_RenderDrawRect(this->renderer, rect) < 0 || 
+        SDL_SetRenderDrawColor(this->renderer, currentRendererColor.r, currentRendererColor.g, currentRendererColor.b, currentRendererColor.a) < 0)
     {
         throw SDL_GetError();
     }
@@ -186,7 +186,7 @@ void SDLWindow::drawFilledRect(SDL_Rect *rect)
 {
 
     // Draw the rectangle and throw an error if an issue arises
-    if(SDL_RenderFillRect(renderer, rect) < 0)
+    if(SDL_RenderFillRect(this->renderer, rect) < 0)
     {
         throw SDL_GetError();
     }
@@ -194,14 +194,14 @@ void SDLWindow::drawFilledRect(SDL_Rect *rect)
 
 void SDLWindow::drawFilledRect(SDL_Rect *rect, SDL_Color color)
 {
-    // Store the current renderer color and set it back once we have drawn the line
+    // Store the current this->renderer color and set it back once we have drawn the line
     SDL_Color currentRendererColor;
-    SDL_GetRenderDrawColor(renderer, &(currentRendererColor.r), &(currentRendererColor.g), &(currentRendererColor.b), &(currentRendererColor.a));
+    SDL_GetRenderDrawColor(this->renderer, &(currentRendererColor.r), &(currentRendererColor.g), &(currentRendererColor.b), &(currentRendererColor.a));
     
     // Draw the rectangle with the desired color and set the color back to what it was
-    if( SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) < 0 || 
-        SDL_RenderFillRect(renderer, rect) < 0 || 
-        SDL_SetRenderDrawColor(renderer, currentRendererColor.r, currentRendererColor.g, currentRendererColor.b, currentRendererColor.a) < 0)
+    if( SDL_SetRenderDrawColor(this->renderer, color.r, color.g, color.b, color.a) < 0 || 
+        SDL_RenderFillRect(this->renderer, rect) < 0 || 
+        SDL_SetRenderDrawColor(this->renderer, currentRendererColor.r, currentRendererColor.g, currentRendererColor.b, currentRendererColor.a) < 0)
     {
         throw SDL_GetError();
     }
@@ -210,15 +210,38 @@ void SDLWindow::drawFilledRect(SDL_Rect *rect, SDL_Color color)
 void SDLWindow::render()
 {   
     // Render the buffer
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(this->renderer);
 }
 
 void SDLWindow::renderBackground(SDL_Color color)
 {
     // Clear the window with a given color.
-    if(SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a) < 0 ||
-       SDL_RenderClear(renderer) < 0 )
+    if(SDL_SetRenderDrawColor(this->renderer, color.r, color.g, color.b, color.a) < 0 ||
+       SDL_RenderClear(this->renderer) < 0 )
      {
         throw SDL_GetError();
      }
+}
+
+void SDLWindow::drawImage(std::string *imageFilePath, SDL_Rect *rect)
+{
+    // Load the image from the path to Memory
+    SDL_Surface *imageSurface = IMG_Load(imageFilePath->c_str());
+    if(imageSurface == NULL)
+    {
+        throw SDL_GetError();
+    }
+
+    // Load it into the VRAM
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(this->renderer, imageSurface);
+    if (texture == NULL)
+    {
+        throw SDL_GetError();
+    }
+
+    // Render the image
+    if (SDL_RenderCopy (this->renderer, texture, NULL, rect) < 0)
+    {
+        throw SDL_GetError();
+    }
 }

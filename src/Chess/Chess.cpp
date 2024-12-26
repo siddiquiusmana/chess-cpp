@@ -147,23 +147,43 @@ void Chess::GameApplication::initializeChessPieces()
     {
         for(int row=0; row<8; row++)
         {
-            if(row == 0)
+            if(row == 1)
             {
                 std::shared_ptr<Chess::Pawn> pawnToDraw = std::make_shared<Chess::Pawn>(row, col, true);
                 this->drawChessPiece(pawnToDraw, row, col);
             }
 
-            if(row == 7)
+            if(row == 6)
             {
                 std::shared_ptr<Chess::Pawn> pawnToDraw = std::make_shared<Chess::Pawn>(row, col, false);
                 this->drawChessPiece(pawnToDraw, row, col);
             }
         }
     }
+
+    this->mainWindow->render();
 }
 
 void Chess::GameApplication::drawPawn(std::shared_ptr<Chess::Pawn> piece, int row, int col)
 {
+    SDL_Rect pawnPos;
+    float scalingFactor = 0.8;
+    pawnPos.w = pawnPos.h = (int) squareSize * 0.8;
+    pawnPos.x = boardBorderPixels + ((int) squareSize * col) + (squareSize * ((1 - scalingFactor) / 2));
+    pawnPos.y = boardBorderPixels + ((int) squareSize * row) + (squareSize * ((1 - scalingFactor) / 2));
+
+    std::string imageFilePath = "../src/Assets/ChessPieces/WhitePawn.jpg";
+    
+    try
+    {
+        this->mainWindow->drawImage(&imageFilePath, &pawnPos);
+    }
+    catch(const char *e)
+    {
+        this->chessLogger->critical("Failed to draw a pawn at row: {} and col: {}\n\tException: {}\n\tCurrent Working Directory: {}", std::to_string(row), std::to_string(col), e, SDL_GetBasePath());
+        exit(CHESS_INIT_FAILURE);
+    }
+
     this->chessLogger->debug("Drawing a pawn at row: " + std::to_string(row) + " col: " + std::to_string(col));
 }
 

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <SDL2/SDL.h>
+#include <SDL_image.h>
 
 #include "../Logger/LogManager.h"
 #include "Geometry.h"
@@ -99,6 +100,10 @@ class SDLWindow
         // Draws a rectangle filled with a solid color to the window given a rectangle object 
         // and a specific color
         void drawFilledRect(SDL_Rect *rect, SDL_Color color);
+
+        // Draws an image to the window given its position in terms of a SDL_Rect and the filePath
+        // in terms of a string
+        void drawImage(std::string *imageFilePath, SDL_Rect *rect);
 
         // Renders the background for the window
         void renderBackground(SDL_Color color);
