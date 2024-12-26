@@ -11,9 +11,8 @@ typedef struct Theme
     // The light square color
     SDL_Color lightSquareColor;
 
-    // The dark piece color
-    SDL_Color darkPieceColor;
+    // The chess piece theme. This is the
+    // name of the theme folder
+    std::string pieceTheme;
 
-    // The light piece color
-    SDL_Color lightPieceColor;
 }Theme;

@@ -1,8 +1,12 @@
 #pragma once
 
+#include <format>
+
 #include "../Logger/LogManager.h"
 #include "../SDL/SDLWindow.h"
 #include "../Themes/ThemeManager.h"
+#include "ChessPiece.h"
+#include "Pawn.h"
 
 namespace Chess 
 {
@@ -10,7 +14,7 @@ namespace Chess
     /**
      * Different statuses for the chess application
      */
-    enum Status
+    enum class Status
     {
         INITIALIZED,
         RUNNING,
@@ -40,6 +44,10 @@ namespace Chess
 
             // Method that starts the application
             void run();
+
+            // Draws a chess piece at a certain row and column on the board.
+            // The row and col are 0 based, meaning that the top left corner is (0,0)
+            void drawChessPiece(std::shared_ptr<Chess::ChessPiece> piece, int row, int col);
 
         private:
             // Log manager
@@ -77,92 +85,12 @@ namespace Chess
             void displayBanner();
 
             // Initializes the chess board by drawing it onto the window
-            void initializeChessBoard();
+            void drawChessBoard();
 
             // Initializes and places chess pieces in their appropriate places
-            void initializeChessPieces(); 
-    };
+            void initializeChessPieces();
 
-    /** 
-     * Each Chess piece will have common methods so this is an abstract class
-     * that defines the interface for each chess piece.
-     */
-    class ChessPiece
-    {
-        /**
-         * The tpe of chess pieces
-         */
-        enum Type
-        {
-            PAWN,
-            KNIGHT,
-            BISHOP,
-            ROOK,
-            QUEEN,
-            KING
-        };
-
-        /**
-         * This struct defines a single log of a chess move. Where the piece moved from
-         * and where to, as well as whether it was a capture.
-         */
-        struct MoveLog
-        {
-            std::pair<int, int> from;
-            std::pair<int, int> to;
-            bool isCapture;
-        };
-        
-        private:
-            // The color of the chess piece. True means white, false means black
-            bool isWhite;
-
-            // The type of chess piece that this is.
-            Type type;
-
-            // The row on which this chess piece is located
-            int row;
-
-            // The column on which this chess piece is located
-            int col;
-
-            // Whether the piece has been captured or not
-            bool isCaptured;
-
-            // This will be used to track legal moves for each chess piece
-            std::vector<std::pair<int, int>> legalMoves;
-
-            // The game application that this chess piece belongs to
-            std::shared_ptr<GameApplication> gameAppPtr;
-
-        public:
-            // Move history for this piece. A list of positions and the position of the piece it took. NULL means the move 
-            // didn't take a piece
-            std::vector<MoveLog> moveHistory;
-
-            // Functionality to move the chess piece to a new location
-            virtual void move(int newRow, int newCol);
-
-            // Functionality to see whether a new move is legal for this chess piece.
-            virtual bool isValidMove(std::pair<int, int> newPos);
-
-            // Functionality to see all valid moves for this chess piece. This is an abstract method that will be 
-            // implemented by each chess piece class.
-            virtual std::vector<std::pair<int, int>> getValidMoves();
-
-            // Functionality to see the coverage of open spaces for this chess piece. This is an abstract method that
-            // will be implemented by each chess piece class.
-            virtual std::vector<std::pair<int, int>> getCoverage();
-            // Getter for the row of the chess piece. Returns -1 if it is not on the board
-            int getRow();
-
-            // Getter for the column of the chess piece. Returns -1 if it is not on the board
-            int getCol();
-
-            // Getter for the type of this chess piece
-            Type getType();
-
-            // Getter for whether or not this chess piece is white
-            bool isWhitePiece();
+            // Draws a Pawn at a certain row and column on the board
+            void drawPawn(std::shared_ptr<Chess::Pawn> piece, int row, int col);
     };
 };

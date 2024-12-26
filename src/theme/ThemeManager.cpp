@@ -6,10 +6,11 @@ ThemeManager::ThemeManager(std::shared_ptr<LogManager> lm)
     themeManagerLogger = lm->getLogger("ThemeManager");
 
     // Initialize the themes
-    ThemeManager::intializeAvailableThemes();
+    ThemeManager::initializeAvailableBoardThemes();
+    ThemeManager::loadInitialPieceTheme();
 }
 
-void ThemeManager::intializeAvailableThemes()
+void ThemeManager::initializeAvailableBoardThemes()
 {
     // Hardcode some themes
     Theme standardBlackAndWhiteTheme;
@@ -28,25 +29,21 @@ void ThemeManager::intializeAvailableThemes()
     brownAndWhiteTheme.darkSqaureColor = {134, 92, 93, 100};
     brownAndWhiteTheme.lightSquareColor = {221, 212, 195, 100};
 
-    currentAvailableThemes.push_back(standardBlackAndWhiteTheme);
-    currentAvailableThemes.push_back(chessDotComTheme);
-    currentAvailableThemes.push_back(oldSchoolGreenAndWhiteTheme);
-    currentAvailableThemes.push_back(brownAndWhiteTheme);
+    currentAvailableBoardThemes.push_back(standardBlackAndWhiteTheme);
+    currentAvailableBoardThemes.push_back(chessDotComTheme);
+    currentAvailableBoardThemes.push_back(oldSchoolGreenAndWhiteTheme);
+    currentAvailableBoardThemes.push_back(brownAndWhiteTheme);
 
     // TODO read in more themes somehow
 
     themeManagerLogger->trace("Added the following themes: ");
     int i=0;
-    for(auto theme: currentAvailableThemes)
+    for(auto theme: currentAvailableBoardThemes)
     {
         themeManagerLogger->trace("Theme {}\n \
-                                   \t\t\tDark Piece Color: r{}g{}b{}a{}\n \
-                                   \t\t\tLight Piece Color: r{}g{}b{}a{}\n \
                                    \t\t\tDark Square Color: r{}g{}b{}a{}\n \
                                    \t\t\tLight Square Color: r{}g{}b{}a{}", 
                                    i,
-                                   theme.darkPieceColor.r, theme.darkPieceColor.g, theme.darkPieceColor.b, theme.darkPieceColor.a,
-                                   theme.lightPieceColor.r, theme.lightPieceColor.g, theme.lightPieceColor.b, theme.lightPieceColor.a,
                                    theme.darkSqaureColor.r, theme.darkSqaureColor.g, theme.darkSqaureColor.b, theme.darkSqaureColor.a,
                                    theme.lightSquareColor.r, theme.lightSquareColor.g, theme.lightSquareColor.b, theme.lightSquareColor.a);
 
@@ -54,31 +51,33 @@ void ThemeManager::intializeAvailableThemes()
     }
 
     // Either read the user preference or set default.
-    loadInitialTheme();
+    loadInitialBoardTheme();
 }
 
-void ThemeManager::setCurrentTheme(int theme)
+void ThemeManager::setCurrentBoardTheme(int theme)
 {
     // Check whether its a valid theme to be set
-    if(theme < 0 || theme >= currentAvailableThemes.size())
+    if(theme < 0 || theme >= currentAvailableBoardThemes.size())
     {
         themeManagerLogger->error("Requesting to set an invalid theme {}, defaulting to 0", theme);
-        currentTheme = currentAvailableThemes.at(0);
+        currentTheme.darkSqaureColor = currentAvailableBoardThemes.at(0).darkSqaureColor;
+        currentTheme.lightSquareColor = currentAvailableBoardThemes.at(0).lightSquareColor;
         return;
     }
     
     // Set the theme
-    currentTheme = currentAvailableThemes.at(theme);
+    currentTheme.darkSqaureColor = currentAvailableBoardThemes.at(theme).darkSqaureColor;
+    currentTheme.lightSquareColor = currentAvailableBoardThemes.at(theme).lightSquareColor;
 }
 
-void ThemeManager::loadInitialTheme()
+void ThemeManager::loadInitialBoardTheme()
 {
     // Read an environment variable. If one doesn't exst, default to 0
-    char* environmentSetTheme = std::getenv(environmentVarName.c_str());
+    char* environmentSetTheme = std::getenv(boardThemePreferenceEnvVarName.c_str());
     if(environmentSetTheme == nullptr)
     {
-        themeManagerLogger->debug("No environment variable of name {} set. Using default theme of 0", environmentVarName);
-        setCurrentTheme(0);
+        themeManagerLogger->debug("No environment variable of name {} set. Using default board theme of 0", boardThemePreferenceEnvVarName);
+        setCurrentBoardTheme(0);
         return;
     }
 
@@ -86,19 +85,19 @@ void ThemeManager::loadInitialTheme()
     try
     {
         int theme = std::stoi(environmentSetTheme);
-        themeManagerLogger->debug("Found an environment variable for setting theme. Setting it to {}", theme);
-        setCurrentTheme(theme);
+        themeManagerLogger->debug("Found an environment variable for setting board theme. Setting it to {}", theme);
+        setCurrentBoardTheme(theme);
     }
     catch(std::invalid_argument &e)
     {
-        themeManagerLogger->error("Error converting the theme from environment variables. Not a valid theme. Setting the theme to the default of 0.");
-        setCurrentTheme(0);
+        themeManagerLogger->error("Error converting the board theme from environment variables. Not a valid theme. Setting the board theme to the default of 0.");
+        setCurrentBoardTheme(0);
         return;
     }
     catch(std::out_of_range &e)
     {
-        themeManagerLogger->error("Error converting the theme from environment variables. Integer out of range. Setting the theme to the default of 0.");
-        setCurrentTheme(0);
+        themeManagerLogger->error("Error converting the board theme from environment variables. Integer out of range. Setting the boardtheme to the default of 0.");
+        setCurrentBoardTheme(0);
         return;
     }
 }
@@ -106,4 +105,31 @@ void ThemeManager::loadInitialTheme()
 Theme ThemeManager::getCurrentTheme()
 {
     return currentTheme;
+}
+
+void ThemeManager::loadInitialPieceTheme()
+{
+    // Read an environment variable. If one doesn't exst, default to "default"
+    char* environmentPieceTheme = std::getenv(pieceThemePreferenceEnvVarName.c_str());
+    if(environmentPieceTheme == nullptr)
+    {
+        themeManagerLogger->debug("No environment variable of name {} set. Using default theme of 'default'", pieceThemePreferenceEnvVarName);
+        setCurrentPieceTheme("default");
+        return;
+    }
+
+    themeManagerLogger->debug("Found an environment variable for setting piece theme. Setting it to {}", environmentPieceTheme);
+    setCurrentPieceTheme(environmentPieceTheme);
+}
+
+void ThemeManager::setCurrentPieceTheme(std::string theme)
+{
+    // If a theme is empty, log an error
+    if(theme.empty())
+    {
+        themeManagerLogger->error("Unable to set theme as its an empty string. Leaving it unchanged");
+        return;
+    }
+
+    currentTheme.pieceTheme = theme;
 }

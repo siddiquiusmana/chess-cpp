@@ -2,59 +2,59 @@
 
 Chess::GameApplication::GameApplication(std::shared_ptr<LogManager> lm_ptr)
 {
-    lm = lm_ptr;
-    chessLogger = lm->getLogger("Chess");
-    chessLogger->debug("Initializing Chess...");
+    this->lm = lm_ptr;
+    this->chessLogger = lm->getLogger("Chess");
+    this->chessLogger->debug("Initializing Chess...");
 
     // Initialize the theme manager
-    themeManager = std::make_shared<ThemeManager>(lm_ptr);
+    this->themeManager = std::make_shared<ThemeManager>(lm_ptr);
 
     // Display the banner
     displayBanner();
 
     // Create a window
-    mainWindow = std::make_shared<SDLWindow>("Chess", lm);
-    mainWindow->createWindow();
+    this->mainWindow = std::make_shared<SDLWindow>("Chess", lm);
+    this->mainWindow->createWindow();
 
     // Board border value initializations
-    boardBorder = 10;
-    boardBorderPixels = (std::min(mainWindow->getWindowHeight(), mainWindow->getWindowWidth()) * (boardBorder / 100.0)) / 2;
-    chessLogger->trace("boardBorderPixels: {}", boardBorderPixels);
+    this->boardBorder = 10;
+    this->boardBorderPixels = (std::min(mainWindow->getWindowHeight(), mainWindow->getWindowWidth()) * (boardBorder / 100.0)) / 2;
+    this->chessLogger->trace("boardBorderPixels: {}", boardBorderPixels);
 
     // Compute the size of each of the 8x8 squares to help draw the grid
     // Leaving a margin of 10% on all sides
-    squareSize = (mainWindow->getWindowHeight() <= mainWindow->getWindowWidth() ? // find the smalller of the two dimensions
+    this->squareSize = (mainWindow->getWindowHeight() <= mainWindow->getWindowWidth() ? // find the smalller of the two dimensions
                     mainWindow->getWindowHeight() / 8.0 : // divide by 8 (number of squares)
                     mainWindow->getWindowWidth() / 8.0) * 
                     ((100.0 - boardBorder) / 100.0); // Take away the border dimensions
-    chessLogger->trace("squareSize: {}", squareSize);
+    this->chessLogger->trace("squareSize: {}", squareSize);
 
     // Initialize the chess board
-    initializeChessBoard();
+    drawChessBoard();
 
     // Initialize the pieces
     initializeChessPieces();
 
-    status = INITIALIZED;
-    chessLogger->info("Board Initialized.");
+    this->status = Status::INITIALIZED;
+    this->chessLogger->info("Board Initialized.");
 }
 
 Chess::GameApplication::~GameApplication()
 {
-    chessLogger->debug("Cleaning up Chess...");
+    this->chessLogger->debug("Cleaning up Chess...");
 
-    mainWindow = nullptr;
+    this->mainWindow = nullptr;
 
-    chessLogger->debug("Cleaned up Chess...");
+    this->chessLogger->debug("Cleaned up Chess...");
 }
 
 void Chess::GameApplication::run()
 {
-    status = RUNNING;
+    this->status = Status::RUNNING;
 
     // Main loop for the application
     SDL_Event event;
-    while(status != SHUTDOWN_REQUESTED)
+    while(this->status != Status::SHUTDOWN_REQUESTED)
     {
         // Poll for events
         SDL_PollEvent(&event);
@@ -63,29 +63,31 @@ void Chess::GameApplication::run()
         {
             // Break the loop and exit
             case SDL_QUIT:
-                status = SHUTDOWN_REQUESTED;
+                this->status = Status::SHUTDOWN_REQUESTED;
                 break;
         }
     }
+
+    this->chessLogger->info("Shutdown normally.");
 }
 
 void Chess::GameApplication::displayBanner()
 {
-    chessLogger->info("*************************************************");
-    chessLogger->info("**************  Chess Application  **************");
-    chessLogger->info("*************************************************");
+    this->chessLogger->info("*************************************************");
+    this->chessLogger->info("**************  Chess Application  **************");
+    this->chessLogger->info("*************************************************");
 }
 
-void Chess::GameApplication::initializeChessBoard()
+void Chess::GameApplication::drawChessBoard()
 {
     // Create a blank background// Create a blank background
     try
     {
-        mainWindow->renderBackground({255, 255, 255, 255});
+        this->mainWindow->renderBackground({255, 255, 255, 255});
     }
     catch(const char* e)
     {
-        chessLogger->critical("Unable to set the background color of the window: {}", e);
+        this->chessLogger->critical("Unable to set the background color of the window: {}", e);
         exit(CHESS_INIT_FAILURE);
     }
 
@@ -119,11 +121,11 @@ void Chess::GameApplication::initializeChessBoard()
             SDL_Color squareColor = isDarkSquare ? darkSquare : lightSquare;
             try
             {
-                mainWindow->drawFilledRect(&square, squareColor);
+                this->mainWindow->drawFilledRect(&square, squareColor);
             }
             catch(const char* error)
             {
-                chessLogger->critical("Failed to initialize chess board. {}", error);
+                this->chessLogger->critical("Failed to initialize chess board. {}", error);
                 exit(CHESS_INIT_FAILURE);
             }
 
@@ -134,7 +136,7 @@ void Chess::GameApplication::initializeChessBoard()
         doesRowStartDark = !doesRowStartDark;
     }
         
-    mainWindow->render();
+    this->mainWindow->render();
 }
 
 void Chess::GameApplication::initializeChessPieces()
@@ -143,6 +145,52 @@ void Chess::GameApplication::initializeChessPieces()
     // Create pawns on each square on the first row
     for(int col=0; col<8; col++)
     {
-        
+        for(int row=0; row<8; row++)
+        {
+            if(row == 0)
+            {
+                std::shared_ptr<Chess::Pawn> pawnToDraw = std::make_shared<Chess::Pawn>(row, col, true);
+                this->drawChessPiece(pawnToDraw, row, col);
+            }
+
+            if(row == 7)
+            {
+                std::shared_ptr<Chess::Pawn> pawnToDraw = std::make_shared<Chess::Pawn>(row, col, false);
+                this->drawChessPiece(pawnToDraw, row, col);
+            }
+        }
+    }
+}
+
+void Chess::GameApplication::drawPawn(std::shared_ptr<Chess::Pawn> piece, int row, int col)
+{
+    this->chessLogger->debug("Drawing a pawn at row: " + std::to_string(row) + " col: " + std::to_string(col));
+}
+
+void Chess::GameApplication::drawChessPiece(std::shared_ptr<Chess::ChessPiece> piece, int row, int col)
+{
+    if(row >= 8 || col >= 8 || row < 0 || col < 0)
+    {
+        throw "Invalid row or column provided.  Row: " + std::to_string(row) + ", Col: " + std::to_string(col);
+        return;
+    }
+
+    switch (piece->getType())
+    {
+        case Type::PAWN:
+        {
+            auto pawn = std::dynamic_pointer_cast<Chess::Pawn>(piece);
+            if(pawn)
+            {
+                this->drawPawn(pawn, row, col);
+            }
+            else
+            {
+                //throw std::format("Unable to draw the requested pawn at row: {}, col: {}", row, col);
+            }
+            break;
+        }
+        default:
+            break;
     }
 }

@@ -106,5 +106,3 @@ class SDLWindow
         // Renders the changes made so far
         void render();
 };
-
-#endif // WINDOW_H

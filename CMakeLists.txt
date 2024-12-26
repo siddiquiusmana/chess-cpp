@@ -13,6 +13,8 @@ add_executable(chess
     src/SDL/SDLWindow.cpp
     src/LogManager/LogManager.cpp
     src/Chess/Chess.cpp
+    src/Chess/ChessPiece.cpp
+    src/Chess/Pawn.cpp
     src/theme/ThemeManager.cpp
 )
 

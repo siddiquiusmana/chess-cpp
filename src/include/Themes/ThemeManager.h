@@ -18,28 +18,41 @@ class ThemeManager
         // Gets the current theme
         Theme getCurrentTheme();
 
-        // Sets the current theme
-        void setCurrentTheme(int theme);
+        // Sets the current board theme
+        void setCurrentBoardTheme(int theme);
+
+        // Sets the current piece theme
+        void setCurrentPieceTheme(std::string theme);
 
     private:
         // The class logger
         std::shared_ptr<spdlog::logger> themeManagerLogger;
 
         // The available current themes
-        std::vector<Theme> currentAvailableThemes;
+        std::vector<Theme> currentAvailableBoardThemes;
 
         // The current them of the chess board
         Theme currentTheme;
 
-        // The name of the environment variable for setting theme
-        const std::string environmentVarName = "CURRENT_CHESS_THEME";
+        // The name of the environment variable for setting board theme
+        const std::string boardThemePreferenceEnvVarName = "CURRENT_CHESS_BOARD_THEME";
 
-        // Apart from hardcoded themes, reads in other 
-        // user configured themes
-        void intializeAvailableThemes();
+        // The name of the environment variable for setting piece theme
+        const std::string pieceThemePreferenceEnvVarName = "CURRENT_PIECE_THEME";
+
+        // Load hardcoded themes and set current theme from environment variable if available
+        // Otherwise load the first one
+        // TODO: Read themes and user preference from a file instead.
+        void initializeAvailableBoardThemes();
 
         // Looks in the environment variables for the environment
-        // variable named CURRENT_CHESS_THEME and if not present
+        // variable named CURRENT_CHESS_BOARD_THEME and if not present
         // Sets 0 as the current theme.
-        void loadInitialTheme();
+        void loadInitialBoardTheme();
+
+        // Looks in the environment variables for the environment
+        // variable named CURRENT_CHESS_PIECE_THEME and if not present
+        // Sets "default" as the current theme. The string loaded here
+        // is the name of the theme folder that contains the images.
+        void loadInitialPieceTheme();
 };
