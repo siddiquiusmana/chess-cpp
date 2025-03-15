@@ -105,7 +105,7 @@ void SDLWindow::createWindow()
 
     // Create a render for the window so window can be drawn on
     w_logger->debug("Creating a this->renderer for the window");
-    this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    this->renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if(this->renderer == NULL)
     {
         w_logger->critical("Renderer for the window failed to be created. Will be unable to draw");
@@ -231,6 +231,9 @@ void SDLWindow::drawImage(std::string *imageFilePath, SDL_Rect *rect)
     {
         throw SDL_GetError();
     }
+    
+    // Enable alpha transparency for the surface
+    SDL_SetSurfaceBlendMode(imageSurface, SDL_BLENDMODE_BLEND);
 
     // Load it into the VRAM
     SDL_Texture *texture = SDL_CreateTextureFromSurface(this->renderer, imageSurface);
@@ -239,9 +242,15 @@ void SDLWindow::drawImage(std::string *imageFilePath, SDL_Rect *rect)
         throw SDL_GetError();
     }
 
+    // Ensure the texture uses alpha blending
+    SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+
     // Render the image
     if (SDL_RenderCopy (this->renderer, texture, NULL, rect) < 0)
     {
         throw SDL_GetError();
     }
+
+    SDL_FreeSurface(imageSurface);
+    SDL_DestroyTexture(texture);
 }

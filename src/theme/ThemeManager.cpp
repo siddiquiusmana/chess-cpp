@@ -113,8 +113,8 @@ void ThemeManager::loadInitialPieceTheme()
     char* environmentPieceTheme = std::getenv(pieceThemePreferenceEnvVarName.c_str());
     if(environmentPieceTheme == nullptr)
     {
-        themeManagerLogger->debug("No environment variable of name {} set. Using default theme of 'default'", pieceThemePreferenceEnvVarName);
-        setCurrentPieceTheme("default");
+        themeManagerLogger->debug("No environment variable of name {} set. Using default theme of 'Default'", pieceThemePreferenceEnvVarName);
+        setCurrentPieceTheme("Default");
         return;
     }
 
@@ -132,4 +132,9 @@ void ThemeManager::setCurrentPieceTheme(std::string theme)
     }
 
     currentTheme.pieceTheme = theme;
+}
+
+std::string ThemeManager::getCurrentChessPieceThemePath(bool isWhite)
+{
+    return isWhite? ("../src/Assets/ChessPieces/Theme/" + this->getCurrentTheme().pieceTheme + "/White/") : ("../src/Assets/ChessPieces/Theme/" + this->getCurrentTheme().pieceTheme + "/Black/");
 }

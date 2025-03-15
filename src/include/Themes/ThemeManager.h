@@ -18,6 +18,10 @@ class ThemeManager
         // Gets the current theme
         Theme getCurrentTheme();
 
+        // Gets the current chess piece theme's root folder. Each theme folder requires a
+        // pawn, knight, bishop, king, queen, and rook files in png format.
+        std::string getCurrentChessPieceThemePath(bool isWhite);
+
         // Sets the current board theme
         void setCurrentBoardTheme(int theme);
 
